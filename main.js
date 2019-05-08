@@ -2,29 +2,45 @@
 const input1 = document.getElementById('img1');
 const input2 = document.getElementById('img2');
 
-const handleAddedFiles = (e)=> {
+const handleAddedFiles = (e) => {
     let file = e.target.files;
-console.log(e.target.id);
+    let alreadyGotImage = document.getElementById('contentContainer');
+    let span = document.createElement('span');
+    let element = document.getElementById('contentContainer');
 
-    if (!file[0].type.match('image.*')){
+    if (!file[0].type.match('image.*')) {
         alert(`Please choose image only`);
         file = [];
     }
-
     let image = file[0];
-    var reader = new FileReader();
-    // Closure to capture the file information.
-    reader.onload = (function(theFile) {
-        return function(e) {
-            // Render thumbnail.
-            var span = document.createElement('span');
-            span.innerHTML = ['<img class="thumb" title="', encodeURI(theFile.name), '" src="', e.target.result, '" />'].join('');
-            document.getElementById('contentContainer').insertBefore(span, null);
-        };
-    })(image);
-    // Read in the image file as a data URL.
-    reader.readAsDataURL(image);
+    let reader = new FileReader();
+    if (!alreadyGotImage.children.length) {
+        reader.onload = (function (file) {
+            return function (e) {
+                span.innerHTML = ['<img class="thumb"', '" src="', e.target.result, '" />'].join('');
+                element.appendChild(span);
+            };
+        })(image);
+        reader.readAsDataURL(image);
+        let contentContainerFirstChild = element.children.length;
+        console.log(contentContainerFirstChild);
+    } else {
+        reader.onload = (function (file) {
+            return function (e) {
+                let contentContainerFirstChild = element.children.length;
+                let clickedElementId = e.target.id;
+                span.innerHTML = ['<img class="thumb"', '" src="', e.target.result, '" />'].join('');
+                console.log(contentContainerFirstChild);
+                contentContainerFirstChild && clickedElementId === 'img1' ?
+                    element.insertBefore(span, contentContainerFirstChild) :
+                    element.appendChild(span)
+                ;
+            };
+        })(image);
+        reader.readAsDataURL(image);
 
+
+    }
 };
 
 input1.addEventListener("change", handleAddedFiles);
