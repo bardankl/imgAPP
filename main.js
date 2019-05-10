@@ -20,27 +20,39 @@ const handleAddedFiles = (e) => {
     let reader = new FileReader();
 
     if (!alreadyGotImage.children.length) {
-        reader.onload = (function (file) {
+
+        clickedElementId === 'img1' ? span.id = 'imgFromFirstBtn' : span.id = 'imgFromSecondBtn';
+        reader.onload = (function () {
             return function (e) {
-                span.innerHTML = ['<img class="thumb"', '" src="', e.target.result, '" />'].join('');
+                span.innerHTML = [`<img class="thumb"`, '" src="', e.target.result, '" />'].join('');
                 element.appendChild(span);
             };
-        })(image);
+        })(image,clickedElementId);
         reader.readAsDataURL(image);
+        console.log(`IF ${alreadyGotImage.children.length}`)
 
-    } else {
-        reader.onload = (function (file) {
+    } else if (alreadyGotImage.children.length === 1) {
+        reader.onload = (function () {
             return function (e,) {
+
                 let contentContainerFirstChild = element.children[0];
                 span.innerHTML = ['<img class="thumb"', '" src="', e.target.result, '" />'].join('');
 
                 functioncCallCounter && clickedElementId === 'img1' ?
                     element.insertBefore(span, contentContainerFirstChild) :
-                    element.appendChild(span)
-                ;
+                    element.appendChild(span);
+                console.log(`ELSE IF ${alreadyGotImage.children.length}`)
             };
         })(image, clickedElementId);
         reader.readAsDataURL(image);
+
+
+    } else {
+        if(e.target.id === 'img1') {
+
+        }else {
+
+        }
 
 
     }
@@ -49,4 +61,3 @@ const handleAddedFiles = (e) => {
 input1.addEventListener("change", handleAddedFiles);
 input2.addEventListener("change", handleAddedFiles);
 
-//todo http://qaru.site/questions/76909/how-to-check-if-element-has-any-children-in-javascript
