@@ -9,28 +9,26 @@ class App {
         ]
     }
 
-    async handleFile(e) {
+    async setDataUrl(e) {
+        this.data[0].url = e;
+    }
+
+    async handleFile(e,) {
         let file = e.target.files;
         let image = file[0];
-        console.log(image);
-
-        console.log(e.target.result);
         let reader = new FileReader();
 
 
-        reader.onload = (function () {
-            return function (e, obj) {
-                // this.data[0].url = e.target.result;
 
-                console.log(obj);
-                console.log(e.target.result);
-                console.log()
-                // span.innerHTML = [`<img class="thumb"`, '" src="', e.target.result, '" />'].join('');
 
+        reader.onload = await (function (r, z) {
+            return function (e,) {
+                app.setDataUrl(e.target.result);
             };
         })(image, this.data);
-        reader.readAsDataURL(image);
 
+        reader.readAsDataURL(image);
+        // console.log(e.target.result);
 
     }
 
@@ -44,8 +42,9 @@ let app = new App();
 let el = document.getElementById('btn');
 el.addEventListener('change', async (e) => {
     try {
-        console.log();
+
         await app.handleFile(e);
+        console.log(app.data)
 
     } catch (error) {
         console.log(error)
