@@ -1,81 +1,106 @@
 let data = [];
+
 class App {
     constructor() {
         this.imgUrl = '';
         this.fileName = '';
         this.fileSize = null;
-        this.id = null;
+        this.renderPosition = null;
         this.fileExtension = '';
     }
 
-    setDataUrl(obj) {
-                this.imgUrl = obj;
+    setDataUrl(url, fileName, fileSize, id) {
+        this.imgUrl = url;
+        this.fileName = fileName;
+        this.fileSize = `${fileSize} bytes`;
+        this.renderPosition = id;
+    };
 
-        };
-
-    async handleFile(e) {
-        await new Promise((resolve, reject)=>{
-            try {
-                let files = e.target.files;
-                let image = files[0];
-                let reader = new FileReader();
-                this.fileName = image.name;
-                this.fileSize = image.size;
-                this.id = (e.target.id !== 'secondImg' ? this.id = 1 : this.id = 2);
-                reader.onload = (function () {
-                        let z = e.target.result;
-                        console.log(z);
-                        console.log(reader);
-
-                    return function (e) {
-                            console.log(e)
-
-                        return e.target.result;
-
-                    };
-
-                })(e);
-                reader.readAsDataURL(image);
-
-            }
-            catch(error){
-                reject(error);
-            }
-        });
-    }
-
-    render() {
-        let span = document.createElement('span');
-        let element = document.getElementById('contentContainer');
-        span.innerHTML = [`<img class="img"`, `src="${this.imgUrl}"/>`].join('');
-
-        element.appendChild(span);
-
+    getParams() {
+        return `name->${this.fileName} SIZE->${this.fileSize} id ->${this.renderPosition} ${this.imgUrl}`
     }
 }
-let render = (arr)=> {
-    let span = document.createElement('span');
-    let element = document.getElementById('contentContainer');
 
-    arr.forEach((el)=>{
-        span.innerHTML = [`<img class="img"`, `src="${el.imgUrl}"/>`].join('');
-        element.appendChild(span);
+function readFileAsync(image) {
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+        reader.onload = () => {
+            resolve(reader.result);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(image);
     })
+}
+
+async function processFile(e) {
+    try {
+        let file = e.target.files[0];
+        let contentBuffer = await readFileAsync(file);
+        return contentBuffer;
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+let render = (arr) => {
+    let element = document.getElementById('contentContainer');
+    element.innerHTML = '';
+    arr.forEach((file) => {
+        let span = document.createElement('span');
+        if(file){
+
+        let contentContainerFirstChild = element.children[file.renderPosition];
+        span.innerHTML = `<img class="img" src="${file.imgUrl}" title="${file.fileName}"/>`;
+
+        element.insertBefore(span, contentContainerFirstChild)}
+    });
+
+
 };
 
-
-let el = document.getElementById('btn');
-el.addEventListener('change', async function(e) {
+let fileHandler = async function (e) {
     try {
         let app1 = new App();
-        await app1.handleFile(e);
-        data.push(app);
-        render(data);
+        let file = e.target.files[0];
+        let id = e.target.id;
+        let filesUrl = await processFile(e);
+        let renderPosition = id[id.length-1];
+        console.log(renderPosition);
+        app1.setDataUrl(filesUrl, file.name, file.size, renderPosition);
+        data[renderPosition-1] = app1;
+        render(data)
 
     } catch (error) {
         console.log(error)
 
     }
+};
 
+let z = document.getElementsByClassName('inputForImg');
+let addListener = () => {
+    for (let i = 0; i < z.length; i++) {
+        z[i].addEventListener('change', fileHandler)
+    }
+};
+addListener();
 
-});
+addInput = () => {
+    let container = document.getElementById('inputContainer');
+    let counter = (container.children.length / 2 + 1);
+    let input = document.createElement('input');
+    input.type = "file";
+    input.className = "inputForImg";
+    input.id = `input${counter}`;
+    input.setAttribute('accept', 'image/*');
+    let label = document.createElement('label');
+    label.className = "labelForImgInput";
+    label.for = `input-${counter}`;
+    label.setAttribute("for", `input${counter}`);
+
+    label.innerText = `Choose another image`;
+
+    container.appendChild(label);
+    container.appendChild(input);
+    addListener();
+
+};
