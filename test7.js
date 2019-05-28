@@ -1,13 +1,14 @@
 let data = [];
 let firstInput = document.getElementById('firstInput');
 let secondInput = document.getElementById('secondInput');
+let checkBox = document.getElementById('checkbox');
 
 class App {
     constructor() {
         this.imgUrl = '';
         this.fileName = '';
         this.fileSize = null;
-        this.inputNumber = null;
+        this.renderPosition = null;
         this.fileExtension = '';
     }
 
@@ -15,11 +16,11 @@ class App {
         this.imgUrl = url;
         this.fileName = fileName;
         this.fileSize = `${fileSize} bytes`;
-        this.inputNumber = id;
+        this.renderPosition = id;
     };
 
     getParams() {
-        return `name->${this.fileName} SIZE->${this.fileSize} id ->${this.inputNumber} ${this.imgUrl}`
+        return `name->${this.fileName} SIZE->${this.fileSize} id ->${this.renderPosition} ${this.imgUrl}`
     }
 }
 
@@ -59,35 +60,33 @@ let fileHandler = async function (e) {
     try {
         let app1 = new App();
         let file = e.target.files[0];
-console.log('oh, hi there');
-        if (data.length >= 2) {
-            alert(`sorry you already pick two images`);
-        } else {
-            let filesUrl = await processFile(e);
-            let inputNumber = (e.target.id !== 'secondInput' ? 1 : 2);
-            app1.setDataUrl(filesUrl, file.name, file.size, inputNumber);
-            data.push(app1);
-            render(data)
-        }
+        let id = e.target.id;
+        let filesUrl = await processFile(e);
 
+        let renderPosition = id[id.length - 1];
+        app1.setDataUrl(filesUrl, file.name, file.size, renderPosition);
+        data.push(app1);
+        render(data)
 
     } catch (error) {
         console.log(error)
 
     }
 };
-//todo 1.  подключить второй файл ридер, организовать порядок добавления.
-firstInput.addEventListener('change', fileHandler);
-secondInput.addEventListener('change', fileHandler);
 
+//todo 1.  подключить второй файл ридер, организовать порядок добавления.
 
 
 let z = document.getElementsByClassName('inputForImg');
-z[2].addEventListener('change', fileHandler);
-
-addInput= ()=> {
-   let container = document.getElementById('inputContainer');
-    let counter = (container.children.length/2+1);
+let addListener = () => {
+    for (let i = 0; i < z.length; i++) {
+        z[i].addEventListener('change', fileHandler)
+    }
+};
+addListener();
+addInput = () => {
+    let container = document.getElementById('inputContainer');
+    let counter = (container.children.length / 2 + 1);
     let input = document.createElement('input');
     input.type = "file";
     input.className = "inputForImg";
@@ -102,5 +101,20 @@ addInput= ()=> {
 
     container.appendChild(label);
     container.appendChild(input);
+    addListener();
 
 };
+//todo поправить этот пиздец с переключением классов
+let toggleDisplayMode = () => {
+    let container = document.getElementById('contentContainer');
+    container.innerHTML = '';
+    if (checkBox.checked) {
+        container.classList.remove('contentContainerRaw');
+        container.classList.toggle('displayVertical');
+    } else {
+        container.classList.toggle('displayVertical');
+        container.classList.add('contentContainerRaw');
+
+    }
+};
+//todo добавить тестовое поле про отображение контента горизонтально или вертикально

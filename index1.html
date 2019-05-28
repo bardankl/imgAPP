@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        .container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .inputContainer, .contentContainerRaw {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .displayVertical {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        img {
+            width: 100px;
+            height: 100px;
+            border: 1px solid lightskyblue;
+            border-radius: 10px;
+        }
+
+        .inputForImg {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+            text-align: center;
+        }
+
+        .labelForImgInput {
+            font-size: 1.25em;
+            font-weight: 700;
+            color: white;
+            background-color: #2a80b9;
+            border: 1px solid lightskyblue;
+            display: inline-block;
+            cursor: pointer;
+            margin-left: 5px;
+            padding: 4px;
+            border-radius: 15px;
+        }
+
+        .labelForImgInput:hover {
+            background-color: lightskyblue;
+        }
+
+        .checkbox {
+            position: absolute;
+            z-index: -1;
+            opacity: 0;
+            margin: 10px 0 0 20px;
+        }
+
+        .checkbox + label {
+            position: relative;
+            padding: 0 0 0 60px;
+            cursor: pointer;
+        }
+
+        .checkbox + label:before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 0;
+            width: 50px;
+            height: 26px;
+            border-radius: 13px;
+            background: #CDD1DA;
+            box-shadow: inset 0 2px 3px rgba(0, 0, 0, .2);
+            transition: .2s;
+        }
+
+        .checkbox + label:after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            border-radius: 10px;
+            background: #FFF;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, .3);
+            transition: .2s;
+        }
+
+        .checkbox:checked + label:before {
+            background: #2a80b9;
+        }
+
+        .checkbox:checked + label:after {
+            left: 26px;
+        }
+
+        .checkbox:focus + label:before {
+            box-shadow: inset 0 2px 3px rgba(0, 0, 0, .2), 0 0 0 3px lightskyblue;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div class="container">
+        <div class="inputContainer" id="inputContainer">
+            <label class="labelForImgInput" for="input1">Choose first image</label>
+            <input type="file" class="inputForImg" id="input1" accept="image/*">
+            <label class="labelForImgInput" for="input2">Choose second image</label>
+            <input type="file" class="inputForImg" id="input2" accept="image/*">
+        </div>
+        <button id="addInput" onclick="addInput()">+</button>
+        <input type="checkbox" class="checkbox" id="checkbox" onchange="toggleDisplayMode()"/>
+        <label for="checkbox">Я переключаю чекбокс</label>
+        <div class="radioContainer">
+        </div>
+    </div>
+</div>
+<div id="contentContainer" class="contentContainerRaw">
+
+</div>
+</div>
+
+<script type="text/javascript" src="test7.js"></script>
+</body>
+</html>
