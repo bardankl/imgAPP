@@ -1,5 +1,6 @@
 let data = [];
-
+let checkBox = document.getElementById('checkbox');
+let z = document.getElementsByClassName('inputForImg');
 class App {
     constructor() {
         this.imgUrl = '';
@@ -46,18 +47,16 @@ let render = (arr) => {
     let element = document.getElementById('contentContainer');
     element.innerHTML = '';
     arr.forEach((file) => {
+        let input = document.getElementById(`input${file.renderPosition}`);
         let span = document.createElement('span');
         if(file){
-
         let contentContainerFirstChild = element.children[file.renderPosition];
         span.innerHTML = `<img class="img" src="${file.imgUrl}" title="${file.fileName}"/>`;
-
-        element.insertBefore(span, contentContainerFirstChild)}
+            element.insertBefore(span, contentContainerFirstChild)}
+            input.value = ''; //reset input value to get ability to rerender the same pic.
     });
 
-
 };
-
 let fileHandler = async function (e) {
     try {
         let app1 = new App();
@@ -65,7 +64,6 @@ let fileHandler = async function (e) {
         let id = e.target.id;
         let filesUrl = await processFile(e);
         let renderPosition = id[id.length-1];
-        console.log(renderPosition);
         app1.setDataUrl(filesUrl, file.name, file.size, renderPosition);
         data[renderPosition-1] = app1;
         render(data)
@@ -74,9 +72,8 @@ let fileHandler = async function (e) {
         console.log(error)
 
     }
-};
 
-let z = document.getElementsByClassName('inputForImg');
+};
 let addListener = () => {
     for (let i = 0; i < z.length; i++) {
         z[i].addEventListener('change', fileHandler)
@@ -96,11 +93,36 @@ addInput = () => {
     label.className = "labelForImgInput";
     label.for = `input-${counter}`;
     label.setAttribute("for", `input${counter}`);
-
-    label.innerText = `Choose another image`;
-
+    if(counter ===3) {
+        label.innerText = `Choose ${counter}d image`;
+    }else{
+        label.innerText = `Choose ${counter}th image`
+    }
     container.appendChild(label);
     container.appendChild(input);
     addListener();
 
 };
+
+let toggleDisplayMode = () => {
+    let checkboxLabel = document.getElementById('checkboxLabel');
+    let container = document.getElementById('contentContainer');
+    container.innerHTML = '';
+
+    if (checkBox.checked) {
+        container.classList.remove('contentContainerRaw');
+        container.classList.toggle('displayVertical');
+        checkboxLabel.innerText = `Back to horizontal`;
+        data.length ? render(data) : container.innerText = `Now, Your content will be displayed vertical.`;
+
+    } else {
+        container.classList.toggle('displayVertical');
+        container.classList.add('contentContainerRaw');
+        checkboxLabel.innerText = `Go, display vertically!`;
+        data.length ? render(data) : container.innerText = `Your content will be displayed horizontally.`;
+
+    }
+};
+//todo !!!!! add  remove input function !!!!! add div container for inputs group
+//todo вертикальный рендер - рендерим сверху вниз и у них одинаковая ширина.
+//todo горизонтальный рендер - рендерим справа на левов и у них одинаковая высота.
